@@ -12,7 +12,7 @@ def enter_key_widget():
         return st.secrets["API_KEY"]
         
     if not google_api_key:
-        st.info("Enter your Google API Key or Type NONE")
+        st.info("Enter your Google API Key or Type No")
         st.stop()
         
     return google_api_key
@@ -37,7 +37,7 @@ def get_fsdocument():
         st.divider()
         st.markdown("<span ><font size=3>Author: Lakshmanan Kuppan</font></span>", unsafe_allow_html=True)
         st.markdown("[Linkedin](https://www.linkedin.com/in/lakshmanankuppan/)")
-        st.markdown("[GitHub](https://github.com/lkuppancodebox/Testplan_Generator.git)")
+        st.markdown("[GitHub](https://github.com/lkuppancodebox/Public_testplangenerator.git)")
         st.divider()
 
         disable_button()
