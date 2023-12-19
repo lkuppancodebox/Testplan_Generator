@@ -37,7 +37,7 @@ def get_fsdocument():
         st.divider()
         st.markdown("<span ><font size=3>Author: Lakshmanan Kuppan</font></span>", unsafe_allow_html=True)
         st.markdown("[Linkedin](https://www.linkedin.com/in/lakshmanankuppan/)")
-        st.markdown("[GitHub](https://github.com/lkuppancodebox/Public_testplangenerator.git)")
+        st.markdown("[GitHub](https://github.com/lkuppancodebox/Testplan_Generator.git)")
         st.divider()
 
         disable_button()
