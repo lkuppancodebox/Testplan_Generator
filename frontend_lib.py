@@ -19,7 +19,6 @@ def check_values(input_text, uploaded_file):
     if not uploaded_file:
         raise ValueError("No document uploaded. Please upload a document.")
 
-
 def disable_button():
     st.session_state.disabled = True
 
@@ -56,10 +55,10 @@ def get_fsdocument():
                     return title, fs_document
                 except ValueError as e:
                     st.error(str(e))
-
+        else:
+            st.stop()
 
 def display_output(filename):
-    disable_button()
     with open(filename, 'r', encoding='utf-8') as fid :
         html_content = fid.read()
 
@@ -69,14 +68,11 @@ def display_output(filename):
     st.download_button(label="Download", file_name=filename, data=html_content)
     st.markdown("<span style='font-size:25px;'>Preview : </span>", unsafe_allow_html=True)
 
-    #st.markdown(f'<a href="data:file/html;base64,{html_content_b64}" download="{filename}">Download HTML File</a>',
-    #            unsafe_allow_html=True)
-
     # Wrap HTML content inside a div with overflow style
     scrollable_html = f'<div style="overflow-y: scroll; height: 400px;">{html_content}</div>'
 
     # Display HTML content with scroll bar
-    st.components.v1.html(scrollable_html, height= 700)
+    st.components.v1.html(scrollable_html, height= 400)
 
 
 
