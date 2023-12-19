@@ -4,15 +4,15 @@ import base64
 def enter_key_widget():
     st.set_page_config(page_title="Testplan Generator powered by Gemini Pro",page_icon="📝")
     st.write("Welcome to the Test Plan Generator. You can proceed by providing your Google API Key")
-    with st.expander("Provide Your Google API Key or Type No"):
+    with st.expander("Provide Your Google API Key or Type Demo"):
         google_api_key = st.text_input("Google API Key", key="google_api_key", type="password")
         
     st.divider()
-    if "No" in google_api_key :
+    if "Demo" in google_api_key :
         return st.secrets["API_KEY"]
         
     if not google_api_key:
-        st.info("Enter your Google API Key or Type No")
+        st.info("Enter your Google API Key or Type Demo")
         st.stop()
         
     return google_api_key
