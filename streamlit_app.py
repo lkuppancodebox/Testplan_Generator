@@ -54,10 +54,10 @@ def generate_testplan(text_chunks):
     cnt = 0
     test_plan = []
 
-    print("Sending chunk by chunk ", end='', flush=True)
+    #print("Sending chunk by chunk ", end='', flush=True)
     for chunk in text_chunks :
         cnt +=1
-        print(f'..{cnt}', end='', flush=True)
+        #print(f'..{cnt}', end='', flush=True)
         prompt = set_prompt(title, chunk)
         markdown_testplan = send_query_to_ai(prompt, API_KEY)
         if markdown_testplan is False:
@@ -105,7 +105,7 @@ def create_testplan(functional_spec, html_file):
         return False
 
 if __name__ == '__main__':
-    print(frontend_lib.st.session_state)
+    #print(frontend_lib.st.session_state)
     API_KEY = frontend_lib.enter_key_widget()
     try:
         title, functional_spec = frontend_lib.get_fsdocument()
