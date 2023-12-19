@@ -6,11 +6,10 @@
 import re
 import sys
 import markdown
-from palm_api import send_query_to_ai
-from palm_api import calculate_token_size
+from google_gemini_api import send_query_to_ai
+from google_gemini_api import calculate_token_size
 from docx import Document
-from bs4 import BeautifulSoup
-from docx.shared import Pt
+import frontend_lib
 
 def set_prompt(title, text):
     prompt = '''
@@ -44,9 +43,9 @@ def convert_docx_to_text(FS_docx):
         sys.exit()
 
 def get_testplan_chunks(testplan_docx):
-    text = convert_docx_to_text("FS.docx")
+    text = convert_docx_to_text(testplan_docx)
     text_len = calculate_token_size(text)
-    token_limit = 3000  # Adjust based on the model's limit
+    token_limit = 1000  # Adjust based on the model's limit
     text_chunks = [text[i:i+token_limit] for i in range(0, text_len, token_limit)]
     return text_chunks
 
@@ -54,14 +53,15 @@ def generate_testplan(text_chunks):
 
     cnt = 0
     test_plan = []
-    title = "EXOS Feature Functional Specification"
 
     print("Sending chunk by chunk ", end='', flush=True)
     for chunk in text_chunks :
         cnt +=1
         print(f'..{cnt}', end='', flush=True)
         prompt = set_prompt(title, chunk)
-        markdown_testplan = send_query_to_ai(prompt)
+        markdown_testplan = send_query_to_ai(prompt, API_KEY)
+        if markdown_testplan is False:
+            return None
         test_plan.append(markdown_testplan)
     return test_plan
 
@@ -81,40 +81,21 @@ def convert_markdown_2_html(html_file, testplan):
     try:
         htmloutput = [markdown.markdown(tp) for tp in testplan]
         html_testplan = "\n".join(htmloutput)
+        with open(html_file, "w") as fid :
+            fid.write(f'<h1> Test Plan for the FS : {title} </h1\n\n<i>Testplan powered by Google Gemini</i>\n\n')
 
-        with open(html_file, "w", encoding="utf-8") as fid:
+        with open(html_file, "a", encoding="utf-8") as fid:
             fid.write(html_testplan)
         return True
     except:
         return False
 
-
-def create_word_from_html(html, doc):
-    soup = BeautifulSoup(html, 'html.parser')
-
-    for element in soup.find_all(['h1', 'h2', 'h3', 'p', 'ul', 'ol']):
-        if element.name == 'h1':
-            paragraph = doc.add_heading(element.get_text(), level=1)
-        elif element.name == 'h2':
-            paragraph = doc.add_heading(element.get_text(), level=2)
-        elif element.name == 'h3':
-            paragraph = doc.add_heading(element.get_text(), level=3)
-        elif element.name == 'p':
-            paragraph = doc.add_paragraph(element.get_text())
-        elif element.name == 'ul':
-            for li in element.find_all('li'):
-                paragraph = doc.add_paragraph('\u2022 ' + li.get_text(), style='ListBullet')
-        elif element.name == 'ol':
-            for li in element.find_all('li'):
-                paragraph = doc.add_paragraph('1. ' + li.get_text(), style='ListNumber')
-
-        # Adjust font size if needed
-        for run in paragraph.runs:
-            run.font.size = Pt(12)
-
 def create_testplan(functional_spec, html_file):
     text_chunks = get_testplan_chunks(functional_spec)
     test_plan = generate_testplan(text_chunks)
+    if test_plan is None:
+        print("Failed to create testplan")
+        return False
     updated_testplan = update_testcase_id(test_plan)
     if convert_markdown_2_html(html_file, updated_testplan) :
         print(f'\n Testplan File created in html format {html_file}')
@@ -124,6 +105,16 @@ def create_testplan(functional_spec, html_file):
         return False
 
 if __name__ == '__main__':
-    functional_spec = "FS.docx"
-    testplan_in_html_format = "testplan.html"
-    create_testplan(functional_spec, testplan_in_html_format)
+    print(frontend_lib.st.session_state)
+    API_KEY = frontend_lib.enter_key_widget()
+    try:
+        title, functional_spec = frontend_lib.get_fsdocument()
+        if title and functional_spec:
+            testplan_in_html_format = "Testplan.html"
+
+            if create_testplan(functional_spec, testplan_in_html_format) :
+                frontend_lib.display_output(testplan_in_html_format)
+            else:
+                frontend_lib.st.error("ERROR creating testplan. Please check API KEY")
+    except:
+        frontend_lib.enable_button()
