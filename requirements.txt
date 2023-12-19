@@ -10,10 +10,6 @@ pandas==2.1.4
 protobuf==4.25.1
 python_docx==1.1.0
 PyYAML==3.13
-PyYAML==6.0
-PyYAML==5.2b1
-PyYAML==6.0.1
 Requests==2.31.0
-setuptools==58.1.0
 setuptools==65.5.1
 streamlit==1.29.0
