@@ -117,4 +117,4 @@ if __name__ == '__main__':
             else:
                 frontend_lib.st.error("ERROR creating testplan. Please check API KEY")
     except:
-        frontend_lib.enable_button()
+        frontend_lib.st.stop()
